@@ -1,0 +1,17 @@
+{
+  "pull_request": {
+    "number": 1,
+    "head": {
+      "ref": "sample-valid-pr"
+    },
+    "base": {
+      "ref": "master"
+    }
+  },
+  "repository": {
+    "name": "pr-conventional-commit",
+    "owner": {
+      "login": "matmar10"
+    }
+  }
+}

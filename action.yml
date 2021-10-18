@@ -1,0 +1,16 @@
+
+name: pr-conventional-commit
+
+description: Lint all commits in a given PR
+
+inputs:
+  token:
+    description: A token with access to your repository scoped in as a secret
+    required: true
+outputs:
+  report:
+    description: JSON array of reports on the commit messages
+
+runs:
+  using: node12
+  main: dist/index.js
