@@ -1587,7 +1587,7 @@ async function run() {
       core.endGroup();
     });
 
-    core.setOutput('report', output);
+    // core.setOutput('report', output);
 
     if (countErrors) {
       core.setFailed(`Action failed with ${countErrors} errors (and ${countWarnings} warnings)`);
