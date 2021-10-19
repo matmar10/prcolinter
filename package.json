@@ -39,7 +39,8 @@
     "@actions/core": "^1.6.0",
     "@actions/github": "^5.0.0",
     "@commitlint/config-conventional": "^13.2.0",
-    "@commitlint/lint": "^13.2.0"
+    "@commitlint/lint": "^13.2.0",
+    "moment": "^2.29.1"
   },
   "release-it": {
     "ci": true,
