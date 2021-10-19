@@ -41,8 +41,8 @@ async function run() {
       repo: repo.name,
       pull_number: pr.number,
     });
+    
     const reports = await Promise.all(commits.data.map(commit => lint(commit.commit.message, ruleSet)));
-
     let countErrors = 0;
     let countWarnings = 0;
     reports.forEach((report, i) => {
