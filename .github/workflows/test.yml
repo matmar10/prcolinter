@@ -21,3 +21,4 @@ jobs:
         uses: ./
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          rules: '{ "body-max-line-length": [0, "always", 100] }'

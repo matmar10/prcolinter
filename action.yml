@@ -7,6 +7,8 @@ inputs:
   token:
     description: A token with access to your repository scoped in as a secret
     required: true
+  rules:
+    description: 'Rule set for commit linter. For examples, see https://github.com/conventional-changelog/commitlint/blob/master/@commitlint/config-conventional/index.js'
 outputs:
   report:
     description: JSON array of reports on the commit messages

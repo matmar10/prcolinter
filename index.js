@@ -13,6 +13,8 @@ const validEvent = ['pull_request'];
 async function run() {
   try {
     const token = core.getInput('token', { required: true });
+    const rulesRaw = core.getInput('rules');
+    const rules = rulesRaw ? JSON.parse(rulesRaw) : {};
 
     const octokit = new github.getOctokit(token);
 
@@ -34,7 +36,10 @@ async function run() {
       repo: repo.name,
       pull_number: pr.number,
     });
-    const reports = await Promise.all(commits.data.map(commit => lint(commit.commit.message, config.rules)));
+    const reports = await Promise.all(commits.data.map(commit => lint(commit.commit.message, {
+      ...config.rules,
+      rules
+    })));
     const output = [];
     let countErrors = 0;
     let countWarnings = 0;
