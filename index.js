@@ -24,12 +24,6 @@ async function run() {
       }
     } = github.context;
 
-    console.log({
-      eventName,
-      repo,
-      pr
-    });
-
     if (validEvent.indexOf(eventName) < 0) {
       core.error(`Invalid event: ${eventName}`);
       return;
