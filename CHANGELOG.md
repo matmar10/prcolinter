@@ -1,3 +1,15 @@
+### [1.1.3](https://github.com/matmar10/prcolinter/compare/1.1.2...1.1.3) (2021-10-19)
+
+
+### Bug Fixes
+
+* self test action point to local not tag ([0b41f43](https://github.com/matmar10/prcolinter/commit/0b41f4353cefb01c8b2561b03fb31e7ac57d0896))
+
+
+### Continuous Integration
+
+* run release in CI mode always ([f8a0fcf](https://github.com/matmar10/prcolinter/commit/f8a0fcf55a594afb9945f203dc58ce853461bae6))
+
 ### [1.1.2](https://github.com/matmar10/prcolinter/compare/1.1.1...1.1.2) (2021-10-19)
 
 
