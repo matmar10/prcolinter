@@ -1,3 +1,20 @@
+## [1.3.0](https://github.com/matmar10/prcolinter/compare/1.2.1...1.3.0) (2021-10-19)
+
+
+### Features
+
+* add debugging ([f7818ff](https://github.com/matmar10/prcolinter/commit/f7818ff9a72cc0e18d3d4bc553c00f9f124d37fd))
+
+
+### Styles
+
+* turn off require refs ([5331b75](https://github.com/matmar10/prcolinter/commit/5331b75f0bb2893fab465a0a63544e67f027f426))
+
+
+### Documentation
+
+* add instructions for debug mode ([37cf5d0](https://github.com/matmar10/prcolinter/commit/37cf5d0dac72adaaeec476dbb01dd3c55babb8ba))
+
 ### [1.2.1](https://github.com/matmar10/prcolinter/compare/1.2.0...1.2.1) (2021-10-19)
 
 
