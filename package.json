@@ -5,17 +5,88 @@
   "main": "index.js",
   "scripts": {
     "build": "ncc build index.js",
+    "release": "release-it",
+    "prerelease": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Matthew J Martin <matthew.mar10@gmail.com>",
+  "license": "MIT",
   "devDependencies": {
-    "@zeit/ncc": "^0.22.3"
+    "@release-it/conventional-changelog": "^3.3.0",
+    "@zeit/ncc": "^0.22.3",
+    "eslint": "^5.16.0",
+    "eslint-plugin-es-beautifier": "^1.0.1",
+    "release-it": "^14.11.6"
   },
   "dependencies": {
     "@actions/core": "^1.6.0",
     "@actions/github": "^5.0.0",
     "@commitlint/config-conventional": "^13.2.0",
     "@commitlint/lint": "^13.2.0"
+  },
+  "release-it": {
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "infile": "CHANGELOG.md",
+        "preset": {
+          "name": "conventionalcommits",
+          "types": [
+            {
+              "type": "feat",
+              "section": "Features"
+            },
+            {
+              "type": "fix",
+              "section": "Bug Fixes"
+            },
+            {
+              "type": "perf",
+              "section": "Performance Improvements"
+            },
+            {
+              "type": "revert",
+              "section": "Reverts"
+            },
+            {
+              "type": "docs",
+              "section": "Documentation"
+            },
+            {
+              "type": "style",
+              "section": "Styles"
+            },
+            {
+              "type": "refactor",
+              "section": "Code Refactoring"
+            },
+            {
+              "type": "test",
+              "section": "Tests"
+            },
+            {
+              "type": "build",
+              "section": "Build System"
+            },
+            {
+              "type": "ci",
+              "section": "Continuous Integration"
+            }
+          ]
+        }
+      }
+    },
+    "git": {
+      "commit": true,
+      "tag": true,
+      "push": true,
+      "requireUpstream": false
+    },
+    "github": {
+      "release": true
+    },
+    "npm": {
+      "private": true,
+      "publish": false
+    }
   }
 }

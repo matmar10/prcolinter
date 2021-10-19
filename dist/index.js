@@ -1520,20 +1520,34 @@ exports.issueCommand = issueCommand;
 
 
 const lintLib = __webpack_require__(236);
-const config = __webpack_require__(64);
+const defaultConfig = __webpack_require__(64);
 const core = __webpack_require__(470);
 const github = __webpack_require__(861);
+const fs = __webpack_require__(747);
 
 const lint = lintLib.default;
-const rules = config.rules;
+const defaultConfigRules = defaultConfig.rules;
 
 const validEvent = ['pull_request'];
 
 async function run() {
   try {
     const token = core.getInput('token', { required: true });
+
+    // load rules from file, if there
+    const configPath = core.getInput('config_path', { required: true });
+    const fileRules = fs.existsSync(configPath) ? require(configPath) : {};
+
+    // load raw rules from action, if there
     const rulesRaw = core.getInput('rules');
     const rules = rulesRaw ? JSON.parse(rulesRaw) : {};
+
+    const ruleSet = {
+      ...defaultConfigRules,
+      ...fileRules,
+      ...rules,
+    };
+    console.log('Rule set:', ruleSet);
 
     const octokit = new github.getOctokit(token);
 
@@ -1541,8 +1555,8 @@ async function run() {
       eventName,
       payload: {
         repository: repo,
-        pull_request: pr
-      }
+        pull_request: pr,
+      },
     } = github.context;
 
     if (validEvent.indexOf(eventName) < 0) {
@@ -1550,18 +1564,13 @@ async function run() {
       return;
     }
 
-    const ruleSet = {
-      ...config.rules,
-      ...rules
-    };
-
     const commits = await octokit.rest.pulls.listCommits({
       owner: repo.owner.login,
       repo: repo.name,
       pull_number: pr.number,
     });
-    const reports = await Promise.all(commits.data.map(commit => lint(commit.commit.message, ruleSet)));
 
+    const reports = await Promise.all(commits.data.map(commit => lint(commit.commit.message, ruleSet)));
     let countErrors = 0;
     let countWarnings = 0;
     reports.forEach((report, i) => {
@@ -1569,11 +1578,11 @@ async function run() {
       const { sha, commit } = meta;
       core.startGroup(`Commit "${commit.message}" ${sha.substring(0, 7)} (${commit.author.name} <${commit.author.email}> on ${commit.author.date})`);
       if (!report.valid) {
-        report.errors.forEach(err => {
+        report.errors.forEach((err) => {
           core.error(`Rule '${err.name}': ${err.message} ("${commit.message}")`);
           countErrors++;
         });
-        report.warnings.forEach(err => {
+        report.warnings.forEach((err) => {
           core.warning(`Rule '${err.name}': ${err.message} ("${commit.message}")`);
           countWarnings++;
         });
@@ -1584,7 +1593,6 @@ async function run() {
     if (countErrors) {
       core.setFailed(`Action failed with ${countErrors} errors (and ${countWarnings} warnings)`);
     }
-
   } catch (error) {
     core.setFailed(error.message);
   }
