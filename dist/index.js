@@ -1538,6 +1538,7 @@ async function run() {
   try {
     const token = core.getInput('token', { required: true });
     const createComment = core.getBooleanInput('comment');
+    console.log('createComment', createComment);
 
     // load rules from file, if there
     const configPath = core.getInput('config_path', { required: true });
@@ -1645,7 +1646,11 @@ ${warningReportText}
 
     if (countErrors) {
       core.setFailed(`Action failed with ${countErrors} errors (and ${countWarnings} warnings)`);
-      const finalReport = `
+    }
+
+    if (createComment) {
+      if (countErrors || countWarnings) {
+        const finalReport = `
 # 🚨🚔 Unconventional Commit 👮‍♀️🙅‍♂️
 
 🤖 Beep boop! Looks like one or more of your commit messages wasn't quite right.
@@ -1670,23 +1675,15 @@ git commit --amend
 \`\`\`
 
 To edit & merge multiple commits, you can rebase with \`git rebase -i master\` (be sure your master is up to date).
-
-      `;
-
-      if (createComment) {
-        if (countErrors || countWarnings) {
-          await octokit.rest.issues.createComment({
-            owner,
-            repo: repo.name,
-            issue_number: num,
-            body: finalReport,
-          });
-        } else {
-          await octokit.rest.issues.createComment({
-            owner,
-            repo: repo.name,
-            issue_number: num,
-            body: `
+`;
+        await octokit.rest.issues.createComment({
+          owner,
+          repo: repo.name,
+          issue_number: num,
+          body: finalReport,
+        });
+      } else {
+        const finalReport = `
 # ✅🙏🏻 Conventional Commit 🥳 🎉
 
 🤖 Beep boop! Congrats, it like all your commit messages conform to the [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) spec! 👏👏👏
@@ -1699,9 +1696,13 @@ Your PR can be closed. Coffee is for closers, so here's a coffee for you: ☕️
 - 👤  **${authors.length} author(s)**
 - ❌  **${countErrors} lint error(s)**
 - ⚠️  **${countWarnings} lint warning(s)**
-`,
-          });
-        }
+`;
+        await octokit.rest.issues.createComment({
+          owner,
+          repo: repo.name,
+          issue_number: num,
+          body: finalReport,
+        });
       }
     }
   } catch (err) {
