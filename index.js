@@ -40,6 +40,7 @@ async function run() {
       ...config.rules,
       ...rules
     };
+    console.log('Rules:', ruleSet);
 
     const commits = await octokit.rest.pulls.listCommits({
       owner: repo.owner.login,
