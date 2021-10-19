@@ -31,25 +31,25 @@ async function run() {
       return;
     }
 
+    const ruleSet = {
+      ...config.rules,
+      ...rules
+    };
+
     const commits = await octokit.rest.pulls.listCommits({
       owner: repo.owner.login,
       repo: repo.name,
       pull_number: pr.number,
     });
-    const reports = await Promise.all(commits.data.map(commit => lint(commit.commit.message, {
-      ...config.rules,
-      rules
-    })));
-    const output = [];
+    
+    const reports = await Promise.all(commits.data.map(commit => lint(commit.commit.message, ruleSet)));
     let countErrors = 0;
     let countWarnings = 0;
     reports.forEach((report, i) => {
       const meta = commits.data[i];
       const { sha, commit } = meta;
       core.startGroup(`Commit "${commit.message}" ${sha.substring(0, 7)} (${commit.author.name} <${commit.author.email}> on ${commit.author.date})`);
-      if (report.valid) {
-        core.notice('OK');
-      } else {
+      if (!report.valid) {
         report.errors.forEach(err => {
           core.error(`Rule '${err.name}': ${err.message} ("${commit.message}")`);
           countErrors++;
@@ -59,15 +59,8 @@ async function run() {
           countWarnings++;
         });
       }
-      output.push({
-        sha,
-        commit,
-        report
-      })
       core.endGroup();
     });
-
-    // core.setOutput('report', output);
 
     if (countErrors) {
       core.setFailed(`Action failed with ${countErrors} errors (and ${countWarnings} warnings)`);
