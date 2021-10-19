@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "ncc build index.js",
-    "release": "release-it",
+    "release": "release-it --ci",
     "prerelease": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
