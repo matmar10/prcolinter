@@ -7,6 +7,9 @@ inputs:
   token:
     description: A token with access to your repository scoped in as a secret
     required: true
+  config_path:
+    description: Path to configuration file
+    default: './github/prclintrc.json'
   rules:
     description: 'Rule set for commit linter. For examples, see https://github.com/conventional-changelog/commitlint/blob/master/@commitlint/config-conventional/index.js'
 

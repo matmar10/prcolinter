@@ -1,9 +1,10 @@
 'use strict';
 
 const lintLib = require('@commitlint/lint');
-const config = require('@commitlint/config-conventional');
+const defaultConfig = require('@commitlint/config-conventional');
 const core = require('@actions/core');
 const github = require('@actions/github');
+const fs = require('fs');
 
 const lint = lintLib.default;
 const rules = config.rules;
@@ -12,7 +13,10 @@ const validEvent = ['pull_request'];
 
 async function run() {
   try {
-    const token = core.getInput('token', { required: true });
+    const token = core.getInput('token', { required: true });{
+    const configPath = core.getInput('config_path', { required: true });
+    const config = fs.existsSync(configPath) ? require(configPath) : {};
+
     const rulesRaw = core.getInput('rules');
     const rules = rulesRaw ? JSON.parse(rulesRaw) : {};
 
@@ -32,6 +36,7 @@ async function run() {
     }
 
     const ruleSet = {
+      ...defaultConfig.rules,
       ...config.rules,
       ...rules
     };
