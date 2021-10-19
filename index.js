@@ -19,13 +19,15 @@ async function run() {
   try {
     const token = core.getInput('token', { required: true });
     const createComment = core.getBooleanInput('comment');
-    console.log('createComment', createComment);
 
     // load rules from file, if there
     const configPath = core.getInput('config_path', { required: true });
+
     // relative to dist/index.js
     const filename = path.join(__dirname, '/../', configPath);
+    core.debug(`Loading config from path: ${filename}`);
     const config = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename, 'utf8')) : {};
+    core.debug(`Loaded config is: ${JSON.stringify(config)}`);
     const fileRules = config.rules || {};
 
     // load raw rules from action, if there
@@ -37,6 +39,7 @@ async function run() {
       ...fileRules,
       ...rules,
     };
+    core.debug(`Using rules: ${JSON.stringify(ruleSet)}`);
 
     const octokit = new github.getOctokit(token);
 
@@ -59,12 +62,14 @@ async function run() {
       return;
     }
 
+    core.debug(`Fetching commits for PR #${num}...`);
     const commits = await octokit.rest.pulls.listCommits({
       owner: repo.owner.login,
       repo: repo.name,
       pull_number: pr.number,
     });
 
+    core.debug(`Processing ${commits.data.length} commits...`);
     const reports = await Promise.all(commits.data.map(commit => lint(commit.commit.message, ruleSet)));
     let countErrors = 0;
     let countWarnings = 0;
@@ -80,7 +85,9 @@ async function run() {
       const shaShort = sha.substring(0, 7);
       const relativeTime = moment(commit.author.date).fromNow();
 
-      core.startGroup(`Commit "${commit.message}" ${shaShort} (${commit.author.name} <${commit.author.email}> on ${commit.author.date})`);
+      const msg = `Commit "${commit.message}" ${shaShort} (${commit.author.name} <${commit.author.email}> on ${commit.author.date})`;
+      core.startGroup(msg);
+      core.debug(msg);
 
       const headerIcon = report.valid ? '✅' :
         report.errors.length ? '❌' : '⚠️';
