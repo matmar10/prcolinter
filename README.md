@@ -59,3 +59,7 @@ jobs:
           # NOTE: the use of a string, not an object because github doesn't support objects as args
           rules: '{"body-max-line-length": [2, "always", 300]}'
 ```
+
+## Debug
+
+You can see verbose log output by adding a Github secret on `ACTIONS_STEP_DEBUG` to `true`
