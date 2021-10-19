@@ -1,3 +1,10 @@
+## [1.2.0](https://github.com/matmar10/prcolinter/compare/1.1.3...1.2.0) (2021-10-19)
+
+
+### Features
+
+* comment on pull request with lint report ([2d172bd](https://github.com/matmar10/prcolinter/commit/2d172bdb4f04b5bcc6a0f44bead7852474dea890)), closes [#14](https://github.com/matmar10/prcolinter/issues/14)
+
 ### [1.1.3](https://github.com/matmar10/prcolinter/compare/1.1.2...1.1.3) (2021-10-19)
 
 
