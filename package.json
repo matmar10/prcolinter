@@ -1,7 +1,7 @@
 {
   "name": "prcolinter",
   "version": "1.1.1",
-  "description": "",
+  "description": "Easily lint each commit for your PRs against the Conventional Commit spec based on configurable Linter rules.",
   "main": "index.js",
   "scripts": {
     "build": "ncc build index.js",
@@ -11,6 +11,23 @@
   },
   "author": "Matthew J Martin <matthew.mar10@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:matmar10/prcolinter.git"
+  },
+  "keywords": [
+    "Github",
+    "Actions",
+    "Github Actions",
+    "Workflow",
+    "Github Workflow",
+    "Conventional Commit",
+    "Commit Messages",
+    "Lint",
+    "Check",
+    "Enforce",
+    "Code Quality"
+  ],
   "devDependencies": {
     "@release-it/conventional-changelog": "^3.3.0",
     "@zeit/ncc": "^0.22.3",
