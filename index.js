@@ -5,6 +5,7 @@ const defaultConfig = require('@commitlint/config-conventional');
 const core = require('@actions/core');
 const github = require('@actions/github');
 const fs = require('fs');
+const path = require('path');
 
 const lint = lintLib.default;
 const defaultConfigRules = defaultConfig.rules;
@@ -17,7 +18,9 @@ async function run() {
 
     // load rules from file, if there
     const configPath = core.getInput('config_path', { required: true });
-    const config = fs.existsSync(configPath) ? require(configPath) : {};
+    // relative to dist/index.js
+    const filename = path.join(__dirname, '/../', configPath);
+    const config = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename, 'utf8')) : {};
     const fileRules = config.rules || {};
 
     // load raw rules from action, if there
@@ -29,7 +32,6 @@ async function run() {
       ...fileRules,
       ...rules,
     };
-    console.log('Rule set:', ruleSet);
 
     const octokit = new github.getOctokit(token);
 
@@ -45,13 +47,6 @@ async function run() {
       core.error(`Invalid event: ${eventName}`);
       return;
     }
-
-    const ruleSet = {
-      ...defaultConfig.rules,
-      ...config.rules,
-      ...rules
-    };
-    console.log('Rules:', ruleSet);
 
     const commits = await octokit.rest.pulls.listCommits({
       owner: repo.owner.login,

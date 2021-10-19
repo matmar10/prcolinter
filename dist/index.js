@@ -1524,6 +1524,7 @@ const defaultConfig = __webpack_require__(64);
 const core = __webpack_require__(470);
 const github = __webpack_require__(861);
 const fs = __webpack_require__(747);
+const path = __webpack_require__(622);
 
 const lint = lintLib.default;
 const defaultConfigRules = defaultConfig.rules;
@@ -1536,7 +1537,10 @@ async function run() {
 
     // load rules from file, if there
     const configPath = core.getInput('config_path', { required: true });
-    const fileRules = fs.existsSync(configPath) ? require(configPath) : {};
+    // relative to dist/index.js
+    const filename = path.join(__dirname, '/../', configPath);
+    const config = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename, 'utf8')) : {};
+    const fileRules = config.rules || {};
 
     // load raw rules from action, if there
     const rulesRaw = core.getInput('rules');
@@ -1547,7 +1551,6 @@ async function run() {
       ...fileRules,
       ...rules,
     };
-    console.log('Rule set:', ruleSet);
 
     const octokit = new github.getOctokit(token);
 
