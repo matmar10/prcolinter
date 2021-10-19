@@ -1,3 +1,10 @@
+### [1.1.2](https://github.com/matmar10/prcolinter/compare/1.1.1...1.1.2) (2021-10-19)
+
+
+### Documentation
+
+* add keywords & update package info ([2a16f32](https://github.com/matmar10/prcolinter/commit/2a16f32dc688d1b43b1ff3e2aab6d57d74a35052)), closes [#12](https://github.com/matmar10/prcolinter/issues/12)
+
 ### [1.1.1](https://github.com/matmar10/pr-conventional-commit/compare/1.1.0...1.1.1) (2021-10-19)
 
 
