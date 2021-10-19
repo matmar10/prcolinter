@@ -1,3 +1,10 @@
+### [1.1.1](https://github.com/matmar10/pr-conventional-commit/compare/1.1.0...1.1.1) (2021-10-19)
+
+
+### Documentation
+
+* add README, logo, & rename package ([2fa32ce](https://github.com/matmar10/pr-conventional-commit/commit/2fa32cee362d1c44b825ee5b60b01bdda05c6349)), closes [#11](https://github.com/matmar10/pr-conventional-commit/issues/11)
+
 ## [1.1.0](https://github.com/matmar10/pr-conventional-commit/compare/0.4.0...1.1.0) (2021-10-19)
 
 
