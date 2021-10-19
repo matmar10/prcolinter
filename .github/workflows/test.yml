@@ -13,6 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Test the action locally
-        uses: ./
+        uses: matmar10/pr-conventional-commit@1.1.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,5 +1,5 @@
 {
-  "name": "pr-conventional-commit",
+  "name": "prcolinter",
   "version": "1.1.0",
   "description": "",
   "main": "index.js",
@@ -25,6 +25,7 @@
     "@commitlint/lint": "^13.2.0"
   },
   "release-it": {
+    "ci": true,
     "plugins": {
       "@release-it/conventional-changelog": {
         "infile": "CHANGELOG.md",
@@ -85,8 +86,7 @@
       "release": true
     },
     "npm": {
-      "private": true,
-      "publish": false
+      "publish": true
     }
   }
 }
