@@ -1538,6 +1538,7 @@ async function run() {
   try {
     const token = core.getInput('token', { required: true });
     const createComment = core.getBooleanInput('comment');
+    const deleteComment = core.getBooleanInput('delete_comment');
 
     // load rules from file, if there
     const configPath = core.getInput('config_path', { required: true });
@@ -1653,6 +1654,36 @@ ${warningReportText}
 
     if (countErrors) {
       core.setFailed(`Action failed with ${countErrors} errors (and ${countWarnings} warnings)`);
+    }
+
+    if (deleteComment) {
+      const perPage = 100;
+      let page = 1;
+      let hasMore = true;
+      do {
+        core.debug(`Fetching page #${page} (max: ${perPage}) of existing comments...`);
+        const res = await octokit.rest.issues.listComments({
+          owner,
+          repo: repo.name,
+          issue_number: num,
+          per_page: 100,
+          page,
+        });
+        const relevantComments = res.data.filter(comment => comment.body.includes('## Commit Message Lint Report'));
+        core.debug(`Fetching ${relevantComments.length} previous lint report comments...`);
+        for (let i = 0; i < relevantComments.length; i++) {
+          core.debug(`Deleting comment #${relevantComments[i].id}...`);
+          await octokit.rest.issues.deleteComment({
+            owner,
+            repo: repo.name,
+            comment_id: relevantComments[i].id,
+          });
+        }
+        page++;
+        if (res.data.length < perPage) {
+          hasMore = false;
+        }
+      } while (hasMore);
     }
 
     if (createComment) {
