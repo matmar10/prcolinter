@@ -1,3 +1,10 @@
+## [1.4.0](https://github.com/matmar10/prcolinter/compare/1.3.0...1.4.0) (2021-10-20)
+
+
+### Features
+
+* delete old linter comments ([1e2f2a6](https://github.com/matmar10/prcolinter/commit/1e2f2a6cd9d5c50817d83708f28bf731b1372174))
+
 ## [1.3.0](https://github.com/matmar10/prcolinter/compare/1.2.1...1.3.0) (2021-10-19)
 
 
