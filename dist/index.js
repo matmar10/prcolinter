@@ -1552,14 +1552,17 @@ async function run() {
 
     // load raw rules from action, if there
     const rulesRaw = core.getInput('rules');
-    const rules = rulesRaw ? JSON.parse(rulesRaw) : {};
+    const yamlRules = rulesRaw ? JSON.parse(rulesRaw) : {};
 
+    core.debug(`Default rules: ${JSON.stringify(defaultConfigRules)}`);
+    core.debug(`File rules: ${JSON.stringify(fileRules)}`);
+    core.debug(`Yaml rules: ${JSON.stringify(yamlRules)}`);
     const ruleSet = {
       ...defaultConfigRules,
       ...fileRules,
-      ...rules,
+      ...yamlRules,
     };
-    core.debug(`Using rules: ${JSON.stringify(ruleSet)}`);
+    core.debug(`Final rules: ${JSON.stringify(ruleSet)}`);
 
     const octokit = new github.getOctokit(token);
 
@@ -1596,6 +1599,7 @@ async function run() {
 
     core.debug(`Processing ${commits.data.length} commits...`);
     const reports = await Promise.all(commits.data.map(commit => lint(commit.commit.message, ruleSet)));
+    core.debug(`Report results: ${JSON.stringify(reports)}`);
     let countErrors = 0;
     let countWarnings = 0;
     const authors = [];
