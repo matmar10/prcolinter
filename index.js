@@ -90,12 +90,20 @@ async function run() {
       core.startGroup(msg);
       core.debug(msg);
 
+      if (!meta.committer) {
+        core.warning(`Commit "${commit.message}" ${shaShort} has no committer in metadata.`);
+      }
+      // handle missing committer due to deleted account, etc.
+      const commiterInfo = meta.committer ?
+        `By **[${commit.author.name} (${meta.committer.login})](https://github.com/${meta.committer.login})** _${relativeTime}_` :
+        `By **${commit.author.name} (Unknown Login) _${relativeTime}_`;
+
       const headerIcon = report.valid ? '✅' :
         report.errors.length ? '❌' : '⚠️';
       let commitReportText = `
 ### ${headerIcon} [Commit ${shaShort}](https://github.com/${owner}/${repo.name}/commit/${sha})
 
-By **[${commit.author.name} (${meta.committer.login})](https://github.com/${meta.committer.login})** _${relativeTime}_
+${commiterInfo}
 
 \`\`\`
 ${commit.message}
