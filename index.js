@@ -58,6 +58,11 @@ async function run() {
       },
     } = github.context;
 
+    core.debug(`Context ---- payload.repository: ${JSON.stringify(repo)}`);
+    core.debug(`Context ---- payload.pull_request: ${JSON.stringify(pr)}`);
+    core.debug(`Context ---- issue.number: ${JSON.stringify(num)}`);
+    core.debug(`Context ---- repo.owner: ${JSON.stringify(owner)}`);
+
     if (validEvent.indexOf(eventName) < 0) {
       core.error(`Invalid event: ${eventName}`);
       return;
@@ -85,6 +90,8 @@ async function run() {
       }
       const shaShort = sha.substring(0, 7);
       const relativeTime = moment(commit.author.date).fromNow();
+
+      core.debug(`  Commit ${shaShort}`);
 
       const msg = `Commit "${commit.message}" ${shaShort} (${commit.author.name} <${commit.author.email}> on ${commit.author.date})`;
       core.startGroup(msg);
