@@ -1,3 +1,16 @@
+### [1.4.1](https://github.com/matmar10/prcolinter/compare/1.4.0...1.4.1) (2021-11-09)
+
+
+### Bug Fixes
+
+* handle commits from deleted github user ([c68def0](https://github.com/matmar10/prcolinter/commit/c68def07b0943de1356cff193dee205556685185)), closes [#23](https://github.com/matmar10/prcolinter/issues/23)
+
+
+### Continuous Integration
+
+* add additional context debugging ([da6c5c8](https://github.com/matmar10/prcolinter/commit/da6c5c82b73256e74414a96bcd32aed86baa22bb))
+* add additional debug logging ([01459f9](https://github.com/matmar10/prcolinter/commit/01459f9b9e58607c183647aa3cd495bf0f8731a7))
+
 ## [1.4.0](https://github.com/matmar10/prcolinter/compare/1.3.0...1.4.0) (2021-10-20)
 
 
