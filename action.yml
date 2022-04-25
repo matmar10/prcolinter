@@ -8,16 +8,20 @@ inputs:
     description: A token with access to your repository scoped in as a secret
     required: true
   config_path:
+    required: false
     description: Path to configuration file
     default: './.github/prcolinterrc.json'
   rules:
+    required: false
     description: 'Rule set for commit linter. For examples, see https://github.com/conventional-changelog/commitlint/blob/master/@commitlint/config-conventional/index.js'
   comment:
+    required: false
     description: Add a lint report as a comment on the PR
-    default: true
+    default: 'true'
   delete_comment:
+    required: false
     description: Whether to scrub old lint reports from comments
-    default: true
+    default: 'true'
 
 runs:
   using: node12
