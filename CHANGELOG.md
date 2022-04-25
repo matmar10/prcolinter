@@ -1,3 +1,10 @@
+### [1.4.4](https://github.com/matmar10/prcolinter/compare/1.4.3...1.4.4) (2022-04-25)
+
+
+### Documentation
+
+* update action name & description ([e1c2c80](https://github.com/matmar10/prcolinter/commit/e1c2c80a88d5687b983de718c1f280fe69facb66))
+
 ### [1.4.3](https://github.com/matmar10/prcolinter/compare/1.4.2...1.4.3) (2022-04-25)
 
 
