@@ -1,3 +1,15 @@
+### [1.4.2](https://github.com/matmar10/prcolinter/compare/1.4.1...1.4.2) (2022-04-25)
+
+
+### Bug Fixes
+
+* action parameter definition required & defaults ([c4e8f91](https://github.com/matmar10/prcolinter/commit/c4e8f91834b8b0bb0310d471af581e73a4df855f))
+
+
+### Documentation
+
+* add logo source assets ([01435bb](https://github.com/matmar10/prcolinter/commit/01435bb0778ddc34fc67df083c5868cf659ac25d))
+
 ### [1.4.1](https://github.com/matmar10/prcolinter/compare/1.4.0...1.4.1) (2021-11-09)
 
 
