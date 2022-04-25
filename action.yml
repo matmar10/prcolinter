@@ -1,7 +1,7 @@
 
-name: pr-conventional-commit
+name: prcolinter
 
-description: Lint all commits in a given PR
+description: Lint all PR commits in a given PR against conventional commit spec
 
 branding:
   icon: check-circle
