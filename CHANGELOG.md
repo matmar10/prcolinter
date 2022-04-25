@@ -1,3 +1,10 @@
+### [1.4.3](https://github.com/matmar10/prcolinter/compare/1.4.2...1.4.3) (2022-04-25)
+
+
+### Documentation
+
+* add github branding icon & color ([2454e1f](https://github.com/matmar10/prcolinter/commit/2454e1f09e97ddac6a355481d08b0e0fc51c18b1))
+
 ### [1.4.2](https://github.com/matmar10/prcolinter/compare/1.4.1...1.4.2) (2022-04-25)
 
 

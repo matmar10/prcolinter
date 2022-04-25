@@ -1,6 +1,6 @@
 {
   "name": "prcolinter",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "Easily lint each commit for your PRs against the Conventional Commit spec based on configurable Linter rules.",
   "main": "index.js",
   "scripts": {
