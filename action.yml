@@ -3,6 +3,10 @@ name: pr-conventional-commit
 
 description: Lint all commits in a given PR
 
+branding:
+  icon: check-circle
+  color: blue
+
 inputs:
   token:
     description: A token with access to your repository scoped in as a secret
