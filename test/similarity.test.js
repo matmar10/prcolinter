@@ -1,6 +1,6 @@
 'use strict';
 
-const { normalizeSubject, diceSimilarity } = require('../src/similarity');
+const { normalizeSubject, diceSimilarity, hasDoubleColon } = require('../src/similarity');
 
 describe('normalizeSubject', () => {
   test('strips type prefix', () => {
@@ -93,5 +93,48 @@ describe('diceSimilarity', () => {
     const release = normalizeSubject('chore(monorepo): release 12.28.0');
     const feature = normalizeSubject('feat(website): remove campaign end dates when enabling rg plan');
     expect(diceSimilarity(release, feature)).toBeLessThan(0.5);
+  });
+});
+
+describe('hasDoubleColon', () => {
+  test('returns false for a normal type-only header', () => {
+    expect(hasDoubleColon('fix: correct typo in README')).toBe(false);
+  });
+
+  test('returns false for a type+scope header', () => {
+    expect(hasDoubleColon('feat(website): enable dark mode')).toBe(false);
+  });
+
+  test('returns false for a breaking-change header', () => {
+    expect(hasDoubleColon('feat(api)!: remove deprecated endpoint')).toBe(false);
+  });
+
+  test('returns false when a colon appears later in the description', () => {
+    expect(hasDoubleColon('fix: support JSON: objects')).toBe(false);
+  });
+
+  test('returns true for double colon with space — "fix: : description"', () => {
+    expect(hasDoubleColon('fix: : description')).toBe(true);
+  });
+
+  test('returns true for double colon without space — "fix:: description"', () => {
+    expect(hasDoubleColon('fix:: description')).toBe(true);
+  });
+
+  test('returns true for type+scope with double colon', () => {
+    expect(hasDoubleColon('feat(auto-giving): : enable ramadan1447 cc dashboard reporting')).toBe(true);
+  });
+
+  test('returns true for breaking-change with double colon', () => {
+    expect(hasDoubleColon('feat(api)!: : remove deprecated endpoint')).toBe(true);
+  });
+
+  test('only checks the first line of multiline messages', () => {
+    const msg = 'fix: correct typo\n\nSee also: https://example.com for details: foo';
+    expect(hasDoubleColon(msg)).toBe(false);
+  });
+
+  test('is case-insensitive for the type', () => {
+    expect(hasDoubleColon('FIX: : description')).toBe(true);
   });
 });

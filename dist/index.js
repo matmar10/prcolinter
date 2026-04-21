@@ -1526,7 +1526,7 @@ const moment = __webpack_require__(482);
 const lint = lintLib.default;
 const defaultConfigRules = defaultConfig.rules;
 
-const { normalizeSubject, diceSimilarity } = __webpack_require__(826);
+const { normalizeSubject, diceSimilarity, hasDoubleColon } = __webpack_require__(826);
 
 const validEvent = ['pull_request'];
 
@@ -1535,6 +1535,7 @@ async function run() {
     const token = core.getInput('token', { required: true });
     const createComment = core.getBooleanInput('comment');
     const deleteComment = core.getBooleanInput('delete_comment');
+    const checkDoubleColon = core.getBooleanInput('check_double_colon');
     const duplicateThresholdRaw = core.getInput('duplicate_threshold');
     const duplicateThreshold = duplicateThresholdRaw !== '' ? parseFloat(duplicateThresholdRaw) : null;
 
@@ -1625,8 +1626,9 @@ async function run() {
         `By **[${commit.author.name} (${meta.committer.login})](https://github.com/${meta.committer.login})** _${relativeTime}_` :
         `By **${commit.author.name} (Unknown Login) _${relativeTime}_`;
 
-      const headerIcon = report.valid ? '✅' :
-        report.errors.length ? '❌' : '⚠️';
+      const doubleColon = checkDoubleColon && hasDoubleColon(commit.message);
+      const headerIcon = (report.valid && !doubleColon) ? '✅' :
+        (report.errors.length || doubleColon) ? '❌' : '⚠️';
       let commitReportText = `
 ### ${headerIcon} [Commit ${shaShort}](https://github.com/${owner}/${repo.name}/commit/${sha})
 
@@ -1662,6 +1664,14 @@ ${commit.message}
         commitReportText += `
 ${errorReportText}
 ${warningReportText}
+`;
+      }
+
+      if (doubleColon) {
+        core.error(`header-colon-count: commit header contains a redundant colon ("${commit.message}")`);
+        countErrors++;
+        commitReportText += `
+❌ **ERROR**: commit header must contain exactly one colon — remove the extra \`:\` before the description
 `;
       }
       commitReports.push(commitReportText);
@@ -44451,7 +44461,13 @@ function diceSimilarity(a, b) {
   return (2 * intersect) / (a.length + b.length - 2);
 }
 
-module.exports = { normalizeSubject, diceSimilarity };
+// Returns true when the commit header has a stray colon immediately after the
+// type(scope): separator, e.g. "fix: : description" or "feat(scope): : foo".
+function hasDoubleColon(message) {
+  return /^[a-z]+(\([^)]+\))?!?:\s*:/i.test(message.split('\n')[0]);
+}
+
+module.exports = { normalizeSubject, diceSimilarity, hasDoubleColon };
 
 
 /***/ }),
