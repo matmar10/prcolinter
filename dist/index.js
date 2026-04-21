@@ -1528,11 +1528,47 @@ const defaultConfigRules = defaultConfig.rules;
 
 const validEvent = ['pull_request'];
 
+// Strips the conventional commit prefix (type(scope): or type:) and normalises
+// whitespace/punctuation so that subjects with different scopes but identical
+// descriptions compare as equal.
+function normalizeSubject(message) {
+  return message
+    .split('\n')[0]
+    .replace(/^[a-z]+(\([^)]+\))?!?:+\s*/i, '')
+    .toLowerCase()
+    .replace(/[^\w\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// Sørensen–Dice coefficient over character bigrams (0 = nothing in common, 1 = identical).
+function diceSimilarity(a, b) {
+  if (a === b) return 1.0;
+  if (a.length < 2 || b.length < 2) return 0.0;
+  const bigramsA = new Map();
+  for (let i = 0; i < a.length - 1; i++) {
+    const bg = a.slice(i, i + 2);
+    bigramsA.set(bg, (bigramsA.get(bg) || 0) + 1);
+  }
+  let intersect = 0;
+  for (let i = 0; i < b.length - 1; i++) {
+    const bg = b.slice(i, i + 2);
+    const count = bigramsA.get(bg) || 0;
+    if (count > 0) {
+      bigramsA.set(bg, count - 1);
+      intersect++;
+    }
+  }
+  return (2 * intersect) / (a.length + b.length - 2);
+}
+
 async function run() {
   try {
     const token = core.getInput('token', { required: true });
     const createComment = core.getBooleanInput('comment');
     const deleteComment = core.getBooleanInput('delete_comment');
+    const duplicateThresholdRaw = core.getInput('duplicate_threshold');
+    const duplicateThreshold = duplicateThresholdRaw !== '' ? parseFloat(duplicateThresholdRaw) : null;
 
     // load rules from file, if there
     const configPath = core.getInput('config_path', { required: true });
@@ -1664,8 +1700,26 @@ ${warningReportText}
       core.endGroup();
     });
 
-    if (countErrors) {
-      core.setFailed(`Action failed with ${countErrors} errors (and ${countWarnings} warnings)`);
+    // Duplicate / similar commit detection
+    const duplicatePairs = [];
+    if (duplicateThreshold !== null) {
+      core.debug(`Checking for duplicate commit subjects (threshold: ${duplicateThreshold})...`);
+      for (let i = 0; i < commits.data.length; i++) {
+        for (let j = i + 1; j < commits.data.length; j++) {
+          const subjectA = normalizeSubject(commits.data[i].commit.message);
+          const subjectB = normalizeSubject(commits.data[j].commit.message);
+          const similarity = diceSimilarity(subjectA, subjectB);
+          core.debug(`  Similarity [${i}↔${j}]: ${similarity.toFixed(3)} — "${subjectA}" vs "${subjectB}"`);
+          if (similarity >= duplicateThreshold) {
+            duplicatePairs.push({ a: commits.data[i], b: commits.data[j], similarity });
+          }
+        }
+      }
+      core.debug(`Found ${duplicatePairs.length} duplicate pair(s)`);
+    }
+
+    if (countErrors || duplicatePairs.length) {
+      core.setFailed(`Action failed with ${countErrors} error(s), ${countWarnings} warning(s), and ${duplicatePairs.length} duplicate commit subject(s)`);
     }
 
     if (deleteComment) {
@@ -1699,7 +1753,26 @@ ${warningReportText}
     }
 
     if (createComment) {
-      if (countErrors || countWarnings) {
+      const duplicateReport = duplicatePairs.length ? `
+## Duplicate Commit Subjects
+
+The following commit pairs have subjects that are too similar (threshold: ${duplicateThreshold}):
+
+${duplicatePairs.map(({ a, b, similarity }) => {
+    const shaA = a.sha.substring(0, 7);
+    const shaB = b.sha.substring(0, 7);
+    const pct = Math.round(similarity * 100);
+    return `### 🔁 ${pct}% similar
+
+| | Commit | Subject |
+|---|---|---|
+| A | [\`${shaA}\`](https://github.com/${owner}/${repo.name}/commit/${a.sha}) | \`${a.commit.message.split('\n')[0]}\` |
+| B | [\`${shaB}\`](https://github.com/${owner}/${repo.name}/commit/${b.sha}) | \`${b.commit.message.split('\n')[0]}\` |
+`;
+  }).join('\n')}
+` : '';
+
+      if (countErrors || countWarnings || duplicatePairs.length) {
         const finalReport = `
 # 🚨🚔 Unconventional Commit 👮‍♀️🙅‍♂️
 
@@ -1711,9 +1784,10 @@ ${warningReportText}
 - 👤  **${authors.length} author(s)**
 - ❌  **${countErrors} lint error(s)**
 - ⚠️  **${countWarnings} lint warning(s)**
+- 🔁  **${duplicatePairs.length} duplicate subject pair(s)**
 
 ${commitReports.join('\n')}
-
+${duplicateReport}
 ## Tips
 
 Be sure to follow the [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) guideline when authoring your commits.
