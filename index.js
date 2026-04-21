@@ -24,8 +24,7 @@ async function run() {
     // load rules from file, if there
     const configPath = core.getInput('config_path', { required: true });
 
-    // relative to dist/index.js
-    const filename = path.join(__dirname, '/../', configPath);
+    const filename = path.join(process.env.GITHUB_WORKSPACE || process.cwd(), configPath);
     core.debug(`Loading config from path: ${filename}`);
     const config = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename, 'utf8')) : {};
     core.debug(`Loaded config is: ${JSON.stringify(config)}`);
