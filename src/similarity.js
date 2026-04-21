@@ -30,4 +30,10 @@ function diceSimilarity(a, b) {
   return (2 * intersect) / (a.length + b.length - 2);
 }
 
-module.exports = { normalizeSubject, diceSimilarity };
+// Returns true when the commit header has a stray colon immediately after the
+// type(scope): separator, e.g. "fix: : description" or "feat(scope): : foo".
+function hasDoubleColon(message) {
+  return /^[a-z]+(\([^)]+\))?!?:\s*:/i.test(message.split('\n')[0]);
+}
+
+module.exports = { normalizeSubject, diceSimilarity, hasDoubleColon };

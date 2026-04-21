@@ -13,7 +13,7 @@ const moment = require('moment');
 const lint = lintLib.default;
 const defaultConfigRules = defaultConfig.rules;
 
-const { normalizeSubject, diceSimilarity } = require('./src/similarity');
+const { normalizeSubject, diceSimilarity, hasDoubleColon } = require('./src/similarity');
 
 const validEvent = ['pull_request'];
 
@@ -22,6 +22,7 @@ async function run() {
     const token = core.getInput('token', { required: true });
     const createComment = core.getBooleanInput('comment');
     const deleteComment = core.getBooleanInput('delete_comment');
+    const checkDoubleColon = core.getBooleanInput('check_double_colon');
     const duplicateThresholdRaw = core.getInput('duplicate_threshold');
     const duplicateThreshold = duplicateThresholdRaw !== '' ? parseFloat(duplicateThresholdRaw) : null;
 
@@ -112,8 +113,9 @@ async function run() {
         `By **[${commit.author.name} (${meta.committer.login})](https://github.com/${meta.committer.login})** _${relativeTime}_` :
         `By **${commit.author.name} (Unknown Login) _${relativeTime}_`;
 
-      const headerIcon = report.valid ? '✅' :
-        report.errors.length ? '❌' : '⚠️';
+      const doubleColon = checkDoubleColon && hasDoubleColon(commit.message);
+      const headerIcon = (report.valid && !doubleColon) ? '✅' :
+        (report.errors.length || doubleColon) ? '❌' : '⚠️';
       let commitReportText = `
 ### ${headerIcon} [Commit ${shaShort}](https://github.com/${owner}/${repo.name}/commit/${sha})
 
@@ -149,6 +151,14 @@ ${commit.message}
         commitReportText += `
 ${errorReportText}
 ${warningReportText}
+`;
+      }
+
+      if (doubleColon) {
+        core.error(`header-colon-count: commit header contains a redundant colon ("${commit.message}")`);
+        countErrors++;
+        commitReportText += `
+❌ **ERROR**: commit header must contain exactly one colon — remove the extra \`:\` before the description
 `;
       }
       commitReports.push(commitReportText);

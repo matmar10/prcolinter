@@ -26,6 +26,10 @@ inputs:
     required: false
     description: Whether to scrub old lint reports from comments
     default: 'true'
+  check_double_colon:
+    required: false
+    description: 'Fail when a commit header contains a redundant colon after the type(scope): separator, e.g. "fix: : description"'
+    default: 'true'
   duplicate_threshold:
     required: false
     description: 'Similarity threshold (0.0–1.0) above which two commit subjects are considered duplicates and the action fails. Leave empty to disable.'
