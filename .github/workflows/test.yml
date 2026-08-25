@@ -29,3 +29,4 @@ jobs:
         uses: ./
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          duplicate_threshold: '0.8'
